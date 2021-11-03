@@ -6,6 +6,7 @@ import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import uuid from 'react-native-uuid'
 import { useNavigation } from '@react-navigation/native'
+import { useAuth } from '../../hooks/auth'
 
 // components
 import { Button } from '../../components/Form/Buttom'
@@ -52,6 +53,8 @@ export function Register() {
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm({ resolver: yupResolver(schema) })
 
+  const { user } = useAuth()
+
   async function handleRegister(form: FormData) {
     if (!transactionType)
       return Alert.alert('Selecione o tipo da transação')
@@ -70,7 +73,7 @@ export function Register() {
     }
     
     try {
-      const dataKey = '@gofinance:transactions'
+      const dataKey = `@gofinance:transactions_user:${user.id}`
       
       const data = await AsyncStorage.getItem(dataKey)
       const currentData = data ? JSON.parse(data) : []

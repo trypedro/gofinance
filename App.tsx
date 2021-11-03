@@ -8,7 +8,7 @@ import { ThemeProvider } from 'styled-components/native'
 
 import AppLoading from 'expo-app-loading'
 
-import { NavigationContainer } from '@react-navigation/native'
+import { Routes } from './src/routes'
 
 // fonts
 import {
@@ -21,9 +21,7 @@ import {
 // themes that the colors is setted
 import colorsTheme from './src/global/styles/theme'
 
-// components of routing
-import { AppRoutes } from './src/routes/app.routes'
-
+import { AuthProvider, useAuth } from './src/hooks/auth'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -31,17 +29,18 @@ export default function App() {
     Poppins_500Medium,
     Poppins_700Bold,
   })
+  const { userStorageLoading } = useAuth()
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || userStorageLoading) {
     return <AppLoading />
   }
 
   return (
     <ThemeProvider theme={colorsTheme}>
-      <NavigationContainer>
-        <StatusBar barStyle='light-content' />
-        <AppRoutes />
-      </NavigationContainer>
+      <StatusBar barStyle='light-content' />
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
     </ThemeProvider>
   )
 }
